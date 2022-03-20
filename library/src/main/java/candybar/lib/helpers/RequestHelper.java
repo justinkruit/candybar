@@ -278,7 +278,10 @@ public class RequestHelper {
             okhttp3.Response response = clientBuilder.build().newCall(okRequest).execute();
             boolean success = response.code() > 199 && response.code() < 300;
             if (!success) {
-                JSONObject responseJson = new JSONObject(Objects.requireNonNull(response.body()).string());
+                return "Unknown error.";
+            }
+            JSONObject responseJson = new JSONObject(Objects.requireNonNull(response.body()).string());
+            if(responseJson.getString("status").equals("error")) {
                 return responseJson.getString("error");
             }
         } catch (IOException | JSONException e) {
