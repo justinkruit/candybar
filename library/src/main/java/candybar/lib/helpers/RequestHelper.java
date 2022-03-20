@@ -236,46 +236,10 @@ public class RequestHelper {
                 .post(okRequestBody)
                 .build();
 
-        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
-
-        // Disable SSL verification
-        try {
-            final X509TrustManager[] trustManagers = new X509TrustManager[]{
-                    new X509TrustManager() {
-                        @SuppressLint("TrustAllX509TrustManager")
-                        @Override
-                        public void checkClientTrusted(X509Certificate[] a, String b) {
-                        }
-
-                        @SuppressLint("TrustAllX509TrustManager")
-                        @Override
-                        public void checkServerTrusted(X509Certificate[] a, String b) {
-                        }
-
-                        @SuppressLint("TrustAllX509TrustManager")
-                        public void checkServerTrusted(X509Certificate[] a, String b, String c) {
-                        }
-
-                        @SuppressLint("TrustAllX509TrustManager")
-                        public void checkServerTrusted(X509Certificate[] a, String b, String c, String d) {
-                        }
-
-                        @Override
-                        public X509Certificate[] getAcceptedIssuers() {
-                            return new X509Certificate[]{};
-                        }
-                    }
-            };
-            final SSLContext sslContext = SSLContext.getInstance("SSL");
-            sslContext.init(null, trustManagers, new SecureRandom());
-            clientBuilder.hostnameVerifier((hostname, session) -> true);
-            clientBuilder.sslSocketFactory(sslContext.getSocketFactory(), trustManagers[0]);
-        } catch (Exception e) {
-            LogUtil.e(Log.getStackTraceString(e));
-        }
+        okhttp3.OkHttpClient okHttpClient = new okhttp3.OkHttpClient();
 
         try {
-            okhttp3.Response response = clientBuilder.build().newCall(okRequest).execute();
+            okhttp3.Response response = okHttpClient.newCall(okRequest).execute();
             boolean success = response.code() > 199 && response.code() < 300;
             if (!success) {
                 return "Unknown error.";
