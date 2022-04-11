@@ -250,6 +250,12 @@ public class SettingsFragment extends Fragment {
 
                     if (isPacific) {
                         errorMessage = RequestHelper.sendPacificRequest(requests, files, directory, pacificApiKey);
+                        if (errorMessage == null) {
+                            for (Request request : requests) {
+                                Database.get(requireActivity()).addRequest(null, request);
+                                Database.get(requireActivity()).addPremiumRequest(null, request);
+                            }
+                        }
                         return errorMessage == null;
                     } else {
                         File appFilter = RequestHelper.buildXml(requireActivity(), requests, RequestHelper.XmlType.APPFILTER);
